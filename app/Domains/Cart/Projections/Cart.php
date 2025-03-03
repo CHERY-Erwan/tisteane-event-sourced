@@ -27,8 +27,10 @@ final class Cart extends Projection
         'session_id' => 'string',
     ];
 
+    protected $with = ['items'];
+
     public function items(): HasMany
     {
-        return $this->hasMany(CartItem::class);
+        return $this->hasMany(CartItem::class, 'cart_uuid', 'uuid');
     }
 }

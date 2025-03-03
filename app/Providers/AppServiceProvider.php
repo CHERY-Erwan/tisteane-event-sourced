@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Domains\Bundle\Projections\Bundle;
+use App\Domains\Product\Projections\ProductVariant;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 final class AppServiceProvider extends ServiceProvider
@@ -16,5 +19,11 @@ final class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void {}
+    public function boot(): void
+    {
+        Relation::morphMap([
+            'product_variant' => ProductVariant::class,
+            'bundle' => Bundle::class,
+        ]);
+    }
 }

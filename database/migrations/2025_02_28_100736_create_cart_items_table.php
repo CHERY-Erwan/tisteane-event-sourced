@@ -13,8 +13,9 @@ return new class extends Migration
         Schema::create('cart_items', function (Blueprint $table) {
             $table->id();
             $table->uuid('cart_uuid');
-            $table->uuid('product_variant_uuid')->nullable();
-            $table->uuid('bundle_uuid')->nullable();
+            $table->uuid('item_uuid');
+            $table->string('item_type');
+            $table->index(['item_type', 'item_uuid']);
             $table->integer('quantity')->default(1);
             $table->timestamps();
 
@@ -22,19 +23,6 @@ return new class extends Migration
                 ->references('uuid')
                 ->on('carts')
                 ->onDelete('cascade');
-
-            $table->foreign('product_variant_uuid')
-                ->references('uuid')
-                ->on('product_variants')
-                ->onDelete('cascade');
-
-            $table->foreign('bundle_uuid')
-                ->references('uuid')
-                ->on('bundles')
-                ->onDelete('cascade');
-
-            $table->unique(['cart_uuid', 'product_variant_uuid']);
-            $table->unique(['cart_uuid', 'bundle_uuid']);
         });
     }
 
