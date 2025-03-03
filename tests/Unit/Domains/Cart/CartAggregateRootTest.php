@@ -22,7 +22,7 @@ test('cart initialized event is recorded', function () {
     );
 
     CartAggregateRoot::fake($uuid)
-        ->when(function (CartAggregateRoot $cartAggregateRoot) use($cartIdentifiers) {
+        ->when(function (CartAggregateRoot $cartAggregateRoot) use ($cartIdentifiers) {
             $cartAggregateRoot->initializeCart($cartIdentifiers);
         })
         ->assertRecorded(new CartInitialized($cartIdentifiers));
