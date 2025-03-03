@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Domains\Cart\Projections;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Spatie\EventSourcing\Projections\Projection;
 
 /**
  * @property string $uuid
  * @property string $customer_uuid
  * @property string $session_id
+ * @property Collection<CartItem> $items
  */
 final class Cart extends Projection
 {
@@ -23,4 +26,9 @@ final class Cart extends Projection
     protected $casts = [
         'session_id' => 'string',
     ];
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
 }
