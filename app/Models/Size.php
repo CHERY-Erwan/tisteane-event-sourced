@@ -11,7 +11,7 @@ final class Size extends Model
 {
     use HasTranslations;
 
-    protected $fillable = ['code', 'label'];
-
     public $translatable = ['label'];
+
+    protected $fillable = ['code', 'label'];
 }

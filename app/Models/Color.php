@@ -11,7 +11,7 @@ final class Color extends Model
 {
     use HasTranslations;
 
-    protected $fillable = ['code', 'label', 'hex_code'];
-
     public $translatable = ['label'];
+
+    protected $fillable = ['code', 'label', 'hex_code'];
 }

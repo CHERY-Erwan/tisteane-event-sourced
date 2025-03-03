@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Product\Projections;
 
+use App\Domains\Shared\Data\PriceData;
 use App\Models\Color;
 use App\Models\Size;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,7 +26,7 @@ use Spatie\Translatable\HasTranslations;
  * @property string $product_uuid
  * @property string $sku
  * @property string $slug
- * @property int $price
+ * @property PriceData $price
  * @property bool $is_active
  * @property-read Product $product
  * @property-read Size $size
@@ -39,18 +40,11 @@ final class ProductVariant extends Projection implements HasMedia
     use HasUuids;
     use InteractsWithMedia;
 
+    public $appends = ['color_attachment'];
+
     protected $primaryKey = 'uuid';
 
     protected $fillable = ['uuid', 'product_uuid', 'sku', 'slug', 'size_id', 'color_id', 'price', 'is_active'];
-
-    public $appends = ['color_attachment'];
-
-    protected function colorAttachment(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getFirstMediaUrl('color_attachment', 'webp')
-        );
-    }
 
     /**
      * Get the product of the variant.
@@ -97,5 +91,12 @@ final class ProductVariant extends Projection implements HasMedia
     public function scopeIsActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    protected function colorAttachment(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->getFirstMediaUrl('color_attachment', 'webp')
+        );
     }
 }

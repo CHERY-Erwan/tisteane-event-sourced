@@ -7,7 +7,6 @@ namespace Database\Seeders;
 use App\Domains\Product\Projections\ProductAttribute;
 use App\Domains\Product\Projections\ProductVariant;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 final class ProductAttributeSeeder extends Seeder
 {

@@ -18,11 +18,11 @@ final class Category extends Model
     use HasUuids;
     use SoftDeletes;
 
+    public $translatable = ['label'];
+
     protected $primaryKey = 'uuid';
 
     protected $fillable = ['uuid', 'label', 'slug'];
-
-    public $translatable = ['label'];
 
     public function products()
     {

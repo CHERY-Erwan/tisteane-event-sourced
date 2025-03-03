@@ -40,20 +40,13 @@ final class Product extends Projection implements HasMedia
     use InteractsWithMedia;
     use SoftDeletes;
 
-    protected $primaryKey = 'uuid';
-
-    protected $fillable = ['uuid', 'category_uuid', 'sku', 'slug', 'short_label', 'label', 'short_description', 'description', 'stock', 'is_active', 'is_featured'];
-
     public $translatable = ['label', 'short_description', 'description'];
 
     public $appends = ['homepage_attachment'];
 
-    protected function homepageAttachment(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getFirstMediaUrl('homepage_attachment', 'webp')
-        );
-    }
+    protected $primaryKey = 'uuid';
+
+    protected $fillable = ['uuid', 'category_uuid', 'sku', 'slug', 'short_label', 'label', 'short_description', 'description', 'stock', 'is_active', 'is_featured'];
 
     public function registerMediaConversions(?Media $media = null): void
     {
@@ -97,5 +90,12 @@ final class Product extends Projection implements HasMedia
     public function scopeIsFeatured(Builder $query): Builder
     {
         return $query->where('is_featured', true);
+    }
+
+    protected function homepageAttachment(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->getFirstMediaUrl('homepage_attachment', 'webp')
+        );
     }
 }
