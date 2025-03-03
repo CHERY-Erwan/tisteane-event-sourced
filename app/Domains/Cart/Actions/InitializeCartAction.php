@@ -15,9 +15,7 @@ final class InitializeCartAction
 {
     public function __invoke(CartIdentifiersData $cartIdentifiers): Cart
     {
-        $cacheKey = $cartIdentifiers->isCustomer()
-            ? "cart:{$cartIdentifiers->customerUuid}"
-            : "cart:{$cartIdentifiers->sessionId}";
+        $cacheKey = sprintf('cart:%s', $cartIdentifiers->customerUuid ?? $cartIdentifiers->sessionId);
 
         if (Cache::has($cacheKey)) {
             return Cache::get($cacheKey);
@@ -42,7 +40,7 @@ final class InitializeCartAction
         $cart = Cart::query()->find($cartUuid);
 
         if (! $cart) {
-            throw new CartNotFoundException('Cart not found after event processing');
+            throw new CartNotFoundException('Cart not found after initialization');
         }
 
         Cache::put($cacheKey, $cart, now()->addMinutes(config('session.lifetime')));
