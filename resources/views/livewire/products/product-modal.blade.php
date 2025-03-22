@@ -1,0 +1,204 @@
+<?php
+
+use App\Domains\Product\Projections\Product;
+use App\Domains\Product\Projections\ProductVariant;
+use App\Models\Size;
+use Livewire\Volt\Component;
+use Livewire\Attributes\On;
+use Illuminate\Support\Collection;
+use App\Domains\Cart\Actions\AddItemToCartAction;
+use App\Domains\Shared\Data\QuantityData;
+use App\Domains\Shared\Data\PriceData;
+use Flux\Flux;
+
+new class extends Component
+{
+    public Product $product;
+
+    public ProductVariant $variant;
+
+    public Collection $sizes;
+
+    public Collection $colors;
+
+    public int $quantity = 1;
+
+    #[Js]
+    public bool $isOpen = false;
+
+    #[On('show-product')]
+    public function showProduct(string $uuid)
+    {
+        $this->product = Product::query()
+            ->with(['variants.size', 'variants.color'])
+            ->findOrFail($uuid);
+
+        $this->variant = $this->product->variants->first();
+
+        $this->sizes = $this->product->variants->pluck('size')->unique();
+        $this->colors = $this->product->variants->where('size.code', $this->variant->size->code)->pluck('color')->unique();
+
+        $this->isOpen = true;
+    }
+
+    public function mount()
+    {
+        $this->quantity = 1;
+        $this->sizes = collect([]);
+        $this->colors = collect([]);
+    }
+
+    public function updateSize(string $size)
+    {
+        $this->variant = $this->product->variants->where('size.code', $size)->first();
+        $this->colors = $this->product->variants->where('size.code', $this->variant->size->code)->pluck('color')->unique();
+    }
+
+    public function updateColor(string $color)
+    {
+        $this->variant = $this->product->variants->where('color.code', $color)->first();
+    }
+
+    public function addToCart(AddItemToCartAction $action)
+    {
+        // $action(
+        //     cart: Cart::query()->first(),
+        //     itemUuid: $this->variant->uuid,
+        //     itemType: 'product',
+        //     quantity: QuantityData::from($this->quantity),
+        //     currentPrice: PriceData::from($this->variant->price)
+        // );
+
+        Flux::toast(
+            position: 'top right',
+            variant: 'success',
+            text: __('pages/product.modal.product_added_to_cart'),
+        );
+    }
+};
+?>
+
+<flux:modal :name="'product-details-' . $product?->uuid" class="w-full max-w-[1200px]" wire:model="isOpen">
+    <div class="space-y-6">
+        <div>
+            <flux:heading size="lg">
+                <flux:breadcrumbs>
+                    <flux:breadcrumbs.item href="#" @click="$wire.isOpen = false">
+                        <flux:icon name="home" class="w-4 h-4" />
+                    </flux:breadcrumbs.item>
+                    <flux:breadcrumbs.item href="#" @click="$wire.isOpen = false">
+                        {{ __("pages/product.modal.breadcrumbs.products") }}
+                    </flux:breadcrumbs.item>
+                    <flux:breadcrumbs.item>
+                        {{ $product?->label }}
+                    </flux:breadcrumbs.item>
+                </flux:breadcrumbs>
+            </flux:heading>
+
+            <div class="pt-6 flex flex-row gap-8">
+                <flux:card class="overflow-hidden !p-0 w-[400px] h-[400px] shrink-0">
+                    <div class="relative flex items-center justify-center w-full h-full">
+                        <img
+                            src="{{ $product?->homepage_attachment }}"
+                            alt="{{ $product?->label }}"
+                            class="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    </div>
+                </flux:card>
+
+                <section class="w-full flex flex-col gap-4">
+                    <flux:heading size="xl" level="2" class="opacity-80 flex justify-between">
+                        {{ $product?->label }} <flux:badge :color="$product?->stock > 0 ? 'lime' : 'rose'" variant="solid" inset="top bottom" class="opacity-80 h-10">
+                            {{ $product?->stock > 0 ? __("pages/product.modal.in_stock") : __("pages/product.modal.out_of_stock") }}
+                        </flux:badge>
+                    </flux:heading>
+
+                    <flux:text class="!text-xl">{{ number_format($variant?->price / 100, 2, ',', '.') }} €</flux:text>
+
+                    <div x-data="{ expanded: false }">
+                        <div
+                            class="transition-all duration-300 overflow-hidden"
+                            x-bind:class="expanded ? 'max-h-[1000px]' : 'max-h-[4.5em]'"
+                        >
+                            <flux:text>{!! $product?->description !!}</flux:text>
+                        </div>
+
+                        <flux:button
+                            x-on:click="expanded = !expanded"
+                            variant="ghost"
+                            size="sm"
+                            color="neutral"
+                            class="mt-2"
+                        >
+                            <span x-html="expanded ? 'Show less' : 'Show more'"></span>
+                            <flux:icon
+                                name="chevron-down"
+                                class="w-4 h-4 transition-transform duration-200"
+                                x-bind:class="expanded ? 'rotate-180' : ''"
+                            />
+                        </flux:button>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <div class="text-base flex gap-2 items-center justify-start">
+                            <flux:text>{{ __("pages/product.modal.size") }}</flux:text>
+                            <flux:text class="font-bold">{{ $variant?->size?->label }}</flux:text>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            @foreach ($sizes as $size)
+                                <flux:button
+                                    wire:click="updateSize('{{ $size->code }}')"
+                                    :loading="false"
+                                    class="hover:cursor-pointer"
+                                >
+                                    <div class="flex items-center justify-center w-full gap-2">
+                                        @if ($variant?->size?->code === $size->code)
+                                            <flux:icon name="plus-circle" class="w-3"/>
+                                        @else
+                                            <flux:icon name="plus" class="w-3"/>
+                                        @endif
+                                        {{ $size->label }}
+                                    </div>
+                                </flux:button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <div class="text-base flex gap-2 items-center justify-start">
+                            <flux:text>{{ __("pages/product.modal.color") }}</flux:text>
+                            <flux:text class="font-bold">{{ $variant?->color?->label }}</flux:text>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            @foreach ($colors as $color)
+                                <flux:button
+                                    wire:click="updateColor('{{ $color->code }}')"
+                                    :loading="false"
+                                    style="background-color: {{ $color->hex_code }};"
+                                    class="flex !border {{ $variant?->color?->code == $color->code ? '!border-neutral-200' : '!border-neutral-950' }} w-8 h-8 hover:cursor-pointer"
+                                >
+                                </flux:button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <flux:button class="w-1/4 !flex !flex-row !justify-around !items-center">
+                        <flux:icon name="minus" class="w-4 h-4 hover:cursor-pointer" wire:click="$set('quantity', {{ max($quantity - 1, 1) }})"/>
+                        {{ $quantity }}
+                        <flux:icon name="plus" class="w-4 h-4 hover:cursor-pointer" wire:click="$set('quantity', {{ min($quantity + 1, 99) }})"/>
+                    </flux:button>
+
+                    <div class="flex flex-row gap-2">
+                        <flux:button class="w-1/2 hover:cursor-pointer" wire:click="addToCart">
+                            {{ __("pages/product.modal.add_to_cart") }}
+                        </flux:button>
+                        <flux:button icon="shopping-cart" class="hover:cursor-pointer" @click="$dispatch('show-cart')"></flux:button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</flux:modal>
