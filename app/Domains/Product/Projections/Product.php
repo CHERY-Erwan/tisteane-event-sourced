@@ -95,7 +95,7 @@ final class Product extends Projection implements HasMedia
     protected function homepageAttachment(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->getFirstMediaUrl('homepage_attachment', 'webp')
+            get: fn() => $this->getFirstMediaUrl('homepage_attachment', 'webp')
         );
     }
 }
