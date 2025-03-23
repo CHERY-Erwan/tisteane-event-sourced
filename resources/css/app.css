@@ -84,6 +84,15 @@ select:focus[data-flux-control] {
         backface-visibility: hidden;
     }
 
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
     .sr-only {
         @apply absolute w-1 h-1 p-0 m-[-1px] overflow-hidden whitespace-nowrap border-0;
     }
