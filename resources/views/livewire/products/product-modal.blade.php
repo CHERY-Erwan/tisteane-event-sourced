@@ -75,8 +75,7 @@ new class extends Component
             text: __('pages/product.modal.product_added_to_cart'),
         );
     }
-};
-?>
+}; ?>
 
 <flux:modal :name="'product-details-' . $product?->uuid" class="w-full max-w-[1200px]" wire:model="isOpen">
     <div class="space-y-6">
@@ -96,18 +95,13 @@ new class extends Component
             </flux:heading>
 
             <div class="pt-6 flex flex-row gap-8">
-                <flux:card class="overflow-hidden !p-0 w-[400px] h-[400px] shrink-0">
-                    <div class="relative flex items-center justify-center w-full h-full">
-                        <img
-                            src="{{ $product?->homepage_attachment }}"
-                            alt="{{ $product?->label }}"
-                            class="w-full h-full object-cover"
-                            loading="lazy"
-                            decoding="async"
-                        />
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    </div>
-                </flux:card>
+                @if ($product && $variant)
+                    <livewire:products.product-slider
+                        :product="$product"
+                        :variant="$variant"
+                        wire:key="product-slider-{{ $variant->size->code }}-{{ $variant->color->code }}"
+                    />
+                @endif
 
                 <section class="w-full flex flex-col gap-4">
                     <flux:heading size="xl" level="2" class="opacity-80 flex justify-between">
@@ -118,29 +112,29 @@ new class extends Component
 
                     <flux:text class="!text-xl">{{ number_format($variant?->price / 100, 2, ',', '.') }} €</flux:text>
 
-                    <div x-data="{ expanded: false }">
+                    <div x-data="{ expanded: false }" class="relative">
                         <div
-                            class="transition-all duration-300 overflow-hidden"
-                            x-bind:class="expanded ? 'max-h-[1000px]' : 'max-h-[4.5em]'"
+                            class="text-base transition-all duration-300"
+                            :class="expanded ? 'max-h-[1000px]' : 'overflow-hidden max-h-[6.5rem]'"
+                            :style="expanded ? {} : { '-webkit-box-orient': 'vertical', 'display': '-webkit-box', '-webkit-line-clamp': '4' }"
                         >
                             <flux:text>{!! $product?->description !!}</flux:text>
                         </div>
 
-                        <flux:button
-                            x-on:click="expanded = !expanded"
-                            variant="ghost"
-                            size="sm"
-                            color="neutral"
-                            class="mt-2"
-                        >
-                            <span x-html="expanded ? 'Show less' : 'Show more'"></span>
-                            <flux:icon
-                                name="chevron-down"
-                                class="w-4 h-4 transition-transform duration-200"
-                                x-bind:class="expanded ? 'rotate-180' : ''"
-                            />
-                        </flux:button>
-                    </div>
+                    <flux:button
+                        @click="expanded = !expanded"
+                        variant="ghost"
+                        size="sm"
+                        color="neutral"
+                        class="mt-2">
+                        <span x-text="expanded ? '{{ __("pages/product.modal.show_less") }}' : '{{ __("pages/product.modal.show_more") }}'"></span>
+                        <flux:icon
+                            name="chevron-down"
+                            class="w-4 h-4 transition-transform duration-200"
+                            x-bind:class="expanded ? 'rotate-180' : ''"
+                        />
+                    </flux:button>
+                </div>
 
                     <div class="flex flex-col gap-2">
                         <div class="text-base flex gap-2 items-center justify-start">
@@ -152,7 +146,7 @@ new class extends Component
                                 <flux:button
                                     wire:click="updateSize('{{ $size->code }}')"
                                     :loading="false"
-                                    class="hover:cursor-pointer"
+                                    class="hover:cursor-pointer h-12"
                                 >
                                     <div class="flex items-center justify-center w-full gap-2">
                                         @if ($variant?->size?->code === $size->code)
@@ -185,19 +179,39 @@ new class extends Component
                         </div>
                     </div>
 
-                    <flux:button class="w-1/4 !flex !flex-row !justify-around !items-center">
+                    <flux:button class="w-1/4 h-12 !flex !flex-row !justify-around !items-center">
                         <flux:icon name="minus" class="w-4 h-4 hover:cursor-pointer" wire:click="$set('quantity', {{ max($quantity - 1, 1) }})"/>
                         {{ $quantity }}
                         <flux:icon name="plus" class="w-4 h-4 hover:cursor-pointer" wire:click="$set('quantity', {{ min($quantity + 1, 99) }})"/>
                     </flux:button>
 
                     <div class="flex flex-row gap-2">
-                        <flux:button class="w-1/2 hover:cursor-pointer" wire:click="addToCart">
+                        <flux:button class="w-1/2 hover:cursor-pointer h-12" wire:click="addToCart">
                             {{ __("pages/product.modal.add_to_cart") }}
                         </flux:button>
-                        <flux:button icon="shopping-cart" class="hover:cursor-pointer" @click="$dispatch('show-cart')"></flux:button>
+
+                        <livewire:cart.cart-indicator/>
                     </div>
                 </section>
+            </div>
+
+            <div class="mt-6 grid gap-4 md:grid-cols-2 md:grid-rows-2 xl:grid-cols-4 xl:grid-rows-1">
+                @foreach ([
+                    ['icon' => 'france', 'title' => __("pages/product.modal.incentives.assembled"), 'text' => __("pages/product.modal.incentives.assembled_text")],
+                    ['icon' => 'shield', 'title' => __("pages/product.modal.incentives.warranty"), 'text' => __("pages/product.modal.incentives.warranty_text")],
+                    ['icon' => 'returns', 'title' => __("pages/product.modal.incentives.returns_policy"), 'text' => __("pages/product.modal.incentives.returns_text")],
+                    ['icon' => 'truck', 'title' => __("pages/product.modal.incentives.shipping"), 'text' => __("pages/product.modal.incentives.shipping_text")]
+                ] as $incentive)
+                    <flux:card class="shadow-md">
+                        <div class="flex gap-4 items-start">
+                            <flux:icon name="{{ $incentive['icon'] }}" class="shrink-0 w-8 h-8 text-white"/>
+                            <div class="flex flex-col gap-2">
+                                <flux:heading size="xl" level="3">{{ $incentive['title'] }}</flux:heading>
+                                <flux:text>{{ $incentive['text'] }}</flux:text>
+                            </div>
+                        </div>
+                    </flux:card>
+                @endforeach
             </div>
         </div>
     </div>
