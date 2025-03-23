@@ -82,9 +82,12 @@ final class ProductVariant extends Projection implements HasMedia
     {
         $this->addMediaConversion('webp')
             ->format('webp')
-            ->performOnCollections(
-                'color_attachment',
-            )
+            ->performOnCollections('color_attachment')
+            ->nonQueued();
+
+        $this->addMediaConversion('thumb')
+            ->format('webp')
+            ->performOnCollections('color_attachment')
             ->nonQueued();
     }
 
@@ -96,7 +99,7 @@ final class ProductVariant extends Projection implements HasMedia
     protected function colorAttachment(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->getFirstMediaUrl('color_attachment', 'webp')
+            get: fn() => $this->getFirstMediaUrl('color_attachment', 'webp')
         );
     }
 }

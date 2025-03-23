@@ -52,10 +52,12 @@ final class Product extends Projection implements HasMedia
     {
         $this->addMediaConversion('webp')
             ->format('webp')
-            ->performOnCollections(
-                'homepage_attachment',
-                'size_u_attachment',
-            )
+            ->performOnCollections('homepage_attachment', 'size_u_attachment')
+            ->nonQueued();
+
+        $this->addMediaConversion('thumb')
+            ->format('webp')
+            ->performOnCollections('homepage_attachment', 'size_u_attachment')
             ->nonQueued();
     }
 
