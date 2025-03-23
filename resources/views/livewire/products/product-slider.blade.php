@@ -20,11 +20,6 @@ new class extends Component
             ...$product->getMedia(sprintf("size_%s_attachment", strtolower($variant->size->code))),
         ]);
     }
-
-    public function setCurrentImage($index)
-    {
-        $this->currentIndex = $index;
-    }
 }; ?>
 
 <div
@@ -53,7 +48,6 @@ new class extends Component
                     type="button"
                     class="flex-shrink-0 w-20 h-20 border-2 rounded-lg overflow-hidden relative"
                     :class="{ 'border-neutral-950': currentIndex === {{ $index }}, 'border-neutral-950 hover:border-neutral-200': currentIndex !== {{ $index }} }"
-                    wire:click="setCurrentImage({{ $index }})"
                     @mouseenter="currentIndex = {{ $index }}"
                 >
                     <img
