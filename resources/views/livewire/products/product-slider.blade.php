@@ -32,13 +32,7 @@ new class extends Component
         ]);
     }
 
-    public function mount(Product $product, ProductVariant $variant)
-    {
-        $this->product = $product;
-        $this->variant = $variant;
-    }
-
-    public function updated()
+    public function updated(): void
     {
         $this->currentIndex = 0;
     }
