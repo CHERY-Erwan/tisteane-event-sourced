@@ -8,6 +8,7 @@ use App\Domains\Cart\Data\CartIdentifiersData;
 use App\Domains\Cart\Events\CartInitialized;
 use App\Domains\Cart\Events\CartItemAdded;
 use App\Domains\Cart\Events\CartItemQuantityUpdated;
+use App\Domains\Cart\Events\CartItemRemoved;
 use App\Domains\Shared\Data\PriceData;
 use App\Domains\Shared\Data\QuantityData;
 use Spatie\EventSourcing\AggregateRoots\AggregateRoot;
@@ -50,6 +51,19 @@ final class CartAggregateRoot extends AggregateRoot
             itemUuid: $itemUuid,
             itemType: $itemType,
             quantity: $quantity,
+        ));
+
+        return $this;
+    }
+
+    /**
+     * Remove an item from the cart.
+     */
+    public function removeItemFromCart(string $itemUuid, string $itemType): self
+    {
+        $this->recordThat(new CartItemRemoved(
+            itemUuid: $itemUuid,
+            itemType: $itemType,
         ));
 
         return $this;

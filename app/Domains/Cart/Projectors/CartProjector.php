@@ -7,6 +7,7 @@ namespace App\Domains\Cart\Projectors;
 use App\Domains\Cart\Events\CartInitialized;
 use App\Domains\Cart\Events\CartItemAdded;
 use App\Domains\Cart\Events\CartItemQuantityUpdated;
+use App\Domains\Cart\Events\CartItemRemoved;
 use App\Domains\Cart\Projections\Cart;
 use App\Domains\Cart\Projections\CartItem;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
@@ -63,5 +64,14 @@ final class CartProjector extends Projector
 
         $cartItem->quantity = $event->quantity->quantity;
         $cartItem->writeable()->save();
+    }
+
+    public function onCartItemRemoved(CartItemRemoved $event): void
+    {
+        CartItem::query()
+            ->where('cart_uuid', $event->aggregateRootUuid())
+            ->where('item_uuid', $event->itemUuid)
+            ->where('item_type', $event->itemType)
+            ->delete();
     }
 }

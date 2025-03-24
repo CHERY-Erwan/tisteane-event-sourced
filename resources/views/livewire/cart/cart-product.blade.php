@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domains\Cart\Projections\CartItem;
 use App\Domains\Cart\Actions\UpdateItemQuantityAction;
+use App\Domains\Cart\Actions\RemoveItemFromCartAction;
 use App\Domains\Shared\Data\QuantityData;
 use Livewire\Volt\Component;
 use Livewire\Attributes\On;
@@ -20,7 +21,7 @@ new class extends Component
         $this->quantity = $item->quantity;
     }
 
-    public function updateQuantity(int $quantity, UpdateItemQuantityAction $action)
+    public function updateItemQuantity(int $quantity, UpdateItemQuantityAction $action)
     {
         $this->quantity = max(1, $quantity);
 
@@ -29,6 +30,18 @@ new class extends Component
             itemType: $this->item->item->getMorphClass(),
             quantity: QuantityData::from(['quantity' => $this->quantity]),
         );
+
+        $this->dispatch('refresh-cart');
+    }
+
+    public function removeItemFromCart(RemoveItemFromCartAction $action)
+    {
+        $action(
+            itemUuid: $this->item->item->uuid,
+            itemType: $this->item->item->getMorphClass(),
+        );
+
+        $this->dispatch('refresh-cart');
     }
 
     public function getTotalPrice(): string
@@ -65,11 +78,11 @@ new class extends Component
 
             <div class="flex justify-between">
                 <flux:button class="w-1/3 h-10 !flex !flex-row !justify-around !items-center">
-                    <flux:icon name="minus" class="w-4 h-4 hover:cursor-pointer" wire:click="updateQuantity({{ $quantity - 1 }})" />
+                    <flux:icon name="minus" class="w-4 h-4 hover:cursor-pointer" wire:click="updateItemQuantity({{ $quantity - 1 }})" />
                     {{ $quantity }}
-                    <flux:icon name="plus" class="w-4 h-4 hover:cursor-pointer" wire:click="updateQuantity({{ $quantity + 1 }})" />
+                    <flux:icon name="plus" class="w-4 h-4 hover:cursor-pointer" wire:click="updateItemQuantity({{ $quantity + 1 }})" />
                 </flux:button>
-                <flux:button wire:click="removeFromCart" size="sm" variant="subtle" :loading="false" class="hover:underline hover:cursor-pointer">
+                <flux:button wire:click="removeItemFromCart" size="sm" variant="subtle" :loading="false" class="hover:underline hover:cursor-pointer">
                     {{ __("pages/cart.modal.delete") }}
                 </flux:button>
             </div>
