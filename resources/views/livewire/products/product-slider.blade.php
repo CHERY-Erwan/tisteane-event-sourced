@@ -6,19 +6,41 @@ use Livewire\Volt\Component;
 use App\Domains\Product\Projections\Product;
 use App\Domains\Product\Projections\ProductVariant;
 use Illuminate\Support\Collection;
-use Flux\Volt\Attributes\Js;
+use Livewire\Attributes\Reactive;
+use Livewire\Attributes\Computed;
 
 new class extends Component
 {
-    public Collection $images;
+    #[Reactive]
+    public ?Product $product = null;
+
+    #[Reactive]
+    public ?ProductVariant $variant = null;
+
     public int $currentIndex = 0;
 
-    public function mount(?Product $product, ?ProductVariant $variant)
+    #[Computed]
+    public function images(): Collection
     {
-        $this->images = collect([
-            ...$variant->getMedia('color_attachment'),
-            ...$product->getMedia(sprintf("size_%s_attachment", strtolower($variant->size->code))),
+        if (!$this->product || !$this->variant) {
+            return collect([]);
+        }
+
+        return collect([
+            ...$this->variant->getMedia('color_attachment'),
+            ...$this->product->getMedia(sprintf("size_%s_attachment", strtolower($this->variant->size->code))),
         ]);
+    }
+
+    public function mount(Product $product, ProductVariant $variant)
+    {
+        $this->product = $product;
+        $this->variant = $variant;
+    }
+
+    public function updated()
+    {
+        $this->currentIndex = 0;
     }
 }; ?>
 
@@ -29,7 +51,7 @@ new class extends Component
     class="relative flex-col gap-1"
 >
     <div class="overflow-hidden relative aspect-square bg-neutral-200 rounded-xl shadow-lg mb-4 w-[380px] h-[380px]">
-        @foreach ($images as $index => $media)
+        @foreach ($this->images() as $index => $media)
             <img
                 src="{{ $media->getUrl('webp') }}"
                 alt="{{ $media->file_alt }}"
@@ -43,7 +65,7 @@ new class extends Component
 
     <div class="relative">
         <div class="flex space-x-2 overflow-x-auto scroll-smooth hide-scrollbar">
-            @foreach ($images as $index => $media)
+            @foreach ($this->images() as $index => $media)
                 <button
                     type="button"
                     class="flex-shrink-0 w-20 h-20 border-2 rounded-lg overflow-hidden relative"

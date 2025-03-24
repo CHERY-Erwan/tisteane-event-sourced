@@ -97,7 +97,6 @@ new class extends Component
             <livewire:products.product-slider
                 :product="$product"
                 :variant="$variant"
-                wire:key="product-slider-{{ $product->uuid }}-{{ $variant->size->code }}-{{ $variant->color->code }}"
             />
         @endif
 
