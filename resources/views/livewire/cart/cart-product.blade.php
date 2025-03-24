@@ -14,22 +14,17 @@ new class extends Component
 {
     public CartItem $item;
 
-    public int $quantity;
-
     public function mount(CartItem $item)
     {
         $this->item = $item;
-        $this->quantity = $item->quantity;
     }
 
     public function updateItemQuantity(int $quantity, UpdateItemQuantityAction $action)
     {
-        $this->quantity = max(1, $quantity);
-
         $action(
             itemUuid: $this->item->item->uuid,
             itemType: $this->item->item->getMorphClass(),
-            quantity: QuantityData::from(['quantity' => $this->quantity]),
+            quantity: QuantityData::from(['quantity' => max(1, $quantity)]),
         );
 
         $this->dispatch('refresh-cart');
@@ -48,7 +43,7 @@ new class extends Component
     #[Computed]
     public function getTotalPrice(): string
     {
-        return number_format($this->item->item->price / 100 * $this->quantity, 2, ',', '.');
+        return number_format($this->item->item->price / 100 * $this->item->quantity, 2, ',', '.');
     }
 }; ?>
 
@@ -80,9 +75,9 @@ new class extends Component
 
             <div class="flex justify-between">
                 <flux:button class="w-1/3 h-10 !flex !flex-row !justify-around !items-center">
-                    <flux:icon name="minus" class="w-4 h-4 hover:cursor-pointer" wire:click="updateItemQuantity({{ $quantity - 1 }})" />
-                    {{ $quantity }}
-                    <flux:icon name="plus" class="w-4 h-4 hover:cursor-pointer" wire:click="updateItemQuantity({{ $quantity + 1 }})" />
+                    <flux:icon name="minus" class="w-4 h-4 hover:cursor-pointer" wire:click="updateItemQuantity({{ $item->quantity - 1 }})" />
+                    {{ $item->quantity }}
+                    <flux:icon name="plus" class="w-4 h-4 hover:cursor-pointer" wire:click="updateItemQuantity({{ $item->quantity + 1 }})" />
                 </flux:button>
                 <flux:button wire:click="removeItemFromCart" size="sm" variant="subtle" :loading="false" class="hover:underline hover:cursor-pointer">
                     {{ __("pages/cart.modal.delete") }}
