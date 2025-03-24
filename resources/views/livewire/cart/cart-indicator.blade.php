@@ -10,13 +10,13 @@ new class extends Component {
 
     public int $cartItemCount = 0;
 
-    public function mount()
+    public function mount(): void
     {
         $this->updateCartCount();
     }
 
     #[On("refresh-cart")]
-    public function updateCartCount()
+    public function updateCartCount(): void
     {
         $cart = request()->attributes->get('cart');
         $cart->refresh();
