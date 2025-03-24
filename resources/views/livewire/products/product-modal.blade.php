@@ -23,7 +23,6 @@ new class extends Component
 
     public int $quantity = 1;
 
-    #[Js]
     public bool $isOpen = false;
 
     #[On('show-product')]
