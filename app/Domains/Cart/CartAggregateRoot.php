@@ -7,6 +7,7 @@ namespace App\Domains\Cart;
 use App\Domains\Cart\Data\CartIdentifiersData;
 use App\Domains\Cart\Events\CartInitialized;
 use App\Domains\Cart\Events\CartItemAdded;
+use App\Domains\Cart\Events\CartItemQuantityUpdated;
 use App\Domains\Shared\Data\PriceData;
 use App\Domains\Shared\Data\QuantityData;
 use Spatie\EventSourcing\AggregateRoots\AggregateRoot;
@@ -35,6 +36,20 @@ final class CartAggregateRoot extends AggregateRoot
             itemType: $itemType,
             quantity: $quantity,
             currentPrice: $currentPrice,
+        ));
+
+        return $this;
+    }
+
+    /**
+     * Update the quantity of an item in the cart.
+     */
+    public function updateItemQuantity(string $itemUuid, string $itemType, QuantityData $quantity): self
+    {
+        $this->recordThat(new CartItemQuantityUpdated(
+            itemUuid: $itemUuid,
+            itemType: $itemType,
+            quantity: $quantity,
         ));
 
         return $this;

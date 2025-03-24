@@ -6,6 +6,7 @@ namespace App\Domains\Cart\Projectors;
 
 use App\Domains\Cart\Events\CartInitialized;
 use App\Domains\Cart\Events\CartItemAdded;
+use App\Domains\Cart\Events\CartItemQuantityUpdated;
 use App\Domains\Cart\Projections\Cart;
 use App\Domains\Cart\Projections\CartItem;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
@@ -25,6 +26,19 @@ final class CartProjector extends Projector
 
     public function onCartItemAdded(CartItemAdded $event): void
     {
+        $cartItem = CartItem::query()
+            ->where('cart_uuid', $event->aggregateRootUuid())
+            ->where('item_uuid', $event->itemUuid)
+            ->where('item_type', $event->itemType)
+            ->first();
+
+        if ($cartItem) {
+            $cartItem->quantity = $cartItem->quantity + $event->quantity->quantity;
+            $cartItem->writeable()->save();
+
+            return;
+        }
+
         CartItem::new()
             ->writeable()
             ->create([
@@ -33,5 +47,21 @@ final class CartProjector extends Projector
                 'item_type' => $event->itemType,
                 'quantity' => $event->quantity->quantity,
             ]);
+    }
+
+    public function onCartItemQuantityUpdated(CartItemQuantityUpdated $event): void
+    {
+        $cartItem = CartItem::query()
+            ->where('cart_uuid', $event->aggregateRootUuid())
+            ->where('item_uuid', $event->itemUuid)
+            ->where('item_type', $event->itemType)
+            ->first();
+
+        if (! $cartItem) {
+            return;
+        }
+
+        $cartItem->quantity = $event->quantity->quantity;
+        $cartItem->writeable()->save();
     }
 }

@@ -6,21 +6,19 @@ namespace App\Domains\Cart\Actions;
 
 use App\Domains\Cart\CartAggregateRoot;
 use App\Domains\Cart\Projections\Cart;
-use App\Domains\Shared\Data\PriceData;
-use App\Domains\Shared\Data\QuantityData;
+use App\Domains\Shared\Data\QuantityData as DataQuantityData;
 
-final class AddItemToCartAction
+final class UpdateItemQuantityAction
 {
-    public function __invoke(string $itemUuid, string $itemType, QuantityData $quantity, PriceData $currentPrice): Cart
+    public function __invoke(string $itemUuid, string $itemType, DataQuantityData $quantity): Cart
     {
         $cart = request()->attributes->get('cart');
 
         CartAggregateRoot::retrieve(uuid: $cart->uuid)
-            ->addItemToCart(
+            ->updateItemQuantity(
                 itemUuid: $itemUuid,
                 itemType: $itemType,
                 quantity: $quantity,
-                currentPrice: $currentPrice,
             )
             ->persist();
 

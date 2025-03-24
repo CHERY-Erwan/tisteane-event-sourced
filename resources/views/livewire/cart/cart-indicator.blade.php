@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Domains\Cart\Projections\Cart;
 use Livewire\Volt\Component;
 use Livewire\Attributes\On;
 
@@ -11,13 +12,16 @@ new class extends Component {
 
     public function mount()
     {
-        $this->cartItemCount = 3;
+        $this->updateCartCount();
     }
 
-    #[On("cart-updated")]
+    #[On("refresh-cart")]
     public function updateCartCount()
     {
-        $this->cartItemCount = 5;
+        $cart = request()->attributes->get('cart');
+        $cart->refresh();
+
+        $this->cartItemCount = $cart->items->sum('quantity');
     }
 };
 ?>

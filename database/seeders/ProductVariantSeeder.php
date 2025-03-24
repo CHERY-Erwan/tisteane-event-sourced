@@ -24,7 +24,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'solar-lid-t082-unique-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'BLACK')->first()->id,
-                'price' => PriceData::from(['amount' => 1999])->toInt(),
+                'price' => PriceData::from(['amount' => 1999])->amount,
                 'is_active' => true,
             ],
             [
@@ -34,7 +34,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'solar-lid-le-parfait-unique-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'BLACK')->first()->id,
-                'price' => PriceData::from(['amount' => 2499])->toInt(),
+                'price' => PriceData::from(['amount' => 2499])->amount,
                 'is_active' => true,
             ],
             [
@@ -44,7 +44,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'le-parfait-solar-lamp-black-small',
                 'size_id' => Size::where('code', 'S')->first()->id,
                 'color_id' => Color::where('code', 'BLACK')->first()->id,
-                'price' => PriceData::from(['amount' => 2499])->toInt(),
+                'price' => PriceData::from(['amount' => 2499])->amount,
                 'is_active' => true,
             ],
             [
@@ -54,7 +54,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'le-parfait-solar-lamp-black-medium',
                 'size_id' => Size::where('code', 'M')->first()->id,
                 'color_id' => Color::where('code', 'BLACK')->first()->id,
-                'price' => PriceData::from(['amount' => 2749])->toInt(),
+                'price' => PriceData::from(['amount' => 2749])->amount,
                 'is_active' => true,
             ],
             [
@@ -64,7 +64,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'le-parfait-solar-lamp-black-large',
                 'size_id' => Size::where('code', 'L')->first()->id,
                 'color_id' => Color::where('code', 'BLACK')->first()->id,
-                'price' => PriceData::from(['amount' => 2999])->toInt(),
+                'price' => PriceData::from(['amount' => 2999])->amount,
                 'is_active' => true,
             ],
             [
@@ -74,7 +74,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'pot-de-lait-light-green-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'LIGHT-GREEN')->first()->id,
-                'price' => PriceData::from(['amount' => 1499])->toInt(),
+                'price' => PriceData::from(['amount' => 1499])->amount,
                 'is_active' => true,
             ],
             [
@@ -84,7 +84,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'pot-de-lait-azure-blue-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'AZURE-BLUE')->first()->id,
-                'price' => PriceData::from(['amount' => 1499])->toInt(),
+                'price' => PriceData::from(['amount' => 1499])->amount,
                 'is_active' => true,
             ],
             [
@@ -94,7 +94,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'pot-de-lait-antique-pink-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'ANTIQUE-PINK')->first()->id,
-                'price' => PriceData::from(['amount' => 1499])->toInt(),
+                'price' => PriceData::from(['amount' => 1499])->amount,
                 'is_active' => true,
             ],
             [
@@ -104,7 +104,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'pot-de-lait-melon-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'MELON')->first()->id,
-                'price' => PriceData::from(['amount' => 1499])->toInt(),
+                'price' => PriceData::from(['amount' => 1499])->amount,
                 'is_active' => true,
             ],
             [
@@ -114,7 +114,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'leonardo-solar-lamp-light-green-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'LIGHT-GREEN')->first()->id,
-                'price' => PriceData::from(['amount' => 1699])->toInt(),
+                'price' => PriceData::from(['amount' => 1699])->amount,
                 'is_active' => true,
             ],
             [
@@ -124,7 +124,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'leonardo-solar-lamp-azure-blue-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'AZURE-BLUE')->first()->id,
-                'price' => PriceData::from(['amount' => 1699])->toInt(),
+                'price' => PriceData::from(['amount' => 1699])->amount,
                 'is_active' => true,
             ],
             [
@@ -134,7 +134,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'leonardo-solar-lamp-antique-pink-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'ANTIQUE-PINK')->first()->id,
-                'price' => PriceData::from(['amount' => 1699])->toInt(),
+                'price' => PriceData::from(['amount' => 1699])->amount,
                 'is_active' => true,
             ],
             [
@@ -144,7 +144,7 @@ final class ProductVariantSeeder extends Seeder
                 'slug' => 'leonardo-solar-lamp-melon-unique',
                 'size_id' => Size::where('code', 'U')->first()->id,
                 'color_id' => Color::where('code', 'MELON')->first()->id,
-                'price' => PriceData::from(['amount' => 1699])->toInt(),
+                'price' => PriceData::from(['amount' => 1699])->amount,
                 'is_active' => true,
             ],
         ];

@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cart_items', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('uuid')->primary();
             $table->uuid('cart_uuid');
             $table->uuid('item_uuid');
             $table->string('item_type');
@@ -23,6 +23,8 @@ return new class extends Migration
                 ->references('uuid')
                 ->on('carts')
                 ->onDelete('cascade');
+
+            $table->unique(['cart_uuid', 'item_uuid', 'item_type']);
         });
     }
 
