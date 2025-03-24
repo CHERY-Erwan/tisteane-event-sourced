@@ -23,8 +23,7 @@ new class extends Component {
 
         $this->cartItemCount = $cart->items->sum('quantity');
     }
-};
-?>
+}; ?>
 
 <div class="relative">
     <div

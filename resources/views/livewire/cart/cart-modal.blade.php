@@ -39,8 +39,7 @@ new class extends Component {
             text: __('pages/cart.modal.checkout_success'),
         );
     }
-};
-?>
+}; ?>
 
 <flux:modal :name="'cart-modal'" variant="flyout" class="w-[500px] flex flex-col h-full" wire:model="isOpen">
     <div class="flex-grow overflow-auto">
