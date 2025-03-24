@@ -11,11 +11,15 @@ new class extends Component {
 
     public ?Cart $cart = null;
 
+    public int $totalCartPrice = 0;
+
     #[On("show-cart")]
     public function showCart()
     {
         $this->cart = request()->attributes->get('cart');
-        $this->cart->refresh();
+
+        $this->refreshCart();
+
         $this->isOpen = true;
     }
 
@@ -23,6 +27,10 @@ new class extends Component {
     public function refreshCart()
     {
         $this->cart?->refresh();
+
+        $this->totalCartPrice = $this->cart->items->reduce(function ($carry, $item) {
+            return $carry + ($item->item->price * $item->quantity);
+        }, 0);
     }
 
     public function checkout(CheckoutCartAction $action)
@@ -50,7 +58,7 @@ new class extends Component {
                 <flux:text>{{ __("pages/cart.modal.subtotal") }}</flux:text>
                 <flux:text>{{ __("pages/cart.modal.shipping") }}</flux:text>
             </div>
-            <flux:text size="xl">200 €</flux:text>
+            <flux:text size="xl">{{ number_format($totalCartPrice / 100, 2, ',', ' ') }}€</flux:text>
         </div>
 
         <flux:button icon="arrow-right" class="w-full h-10 mb-4 hover:cursor-pointer" wire:click="checkout">
