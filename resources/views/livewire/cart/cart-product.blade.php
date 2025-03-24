@@ -8,6 +8,7 @@ use App\Domains\Cart\Actions\RemoveItemFromCartAction;
 use App\Domains\Shared\Data\QuantityData;
 use Livewire\Volt\Component;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Computed;
 
 new class extends Component
 {
@@ -44,6 +45,7 @@ new class extends Component
         $this->dispatch('refresh-cart');
     }
 
+    #[Computed]
     public function getTotalPrice(): string
     {
         return number_format($this->item->item->price / 100 * $this->quantity, 2, ',', '.');
