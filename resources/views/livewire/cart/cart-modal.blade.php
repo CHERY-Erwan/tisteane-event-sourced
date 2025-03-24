@@ -4,6 +4,7 @@ use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 use Livewire\Attributes\Js;
 use App\Domains\Cart\Projections\Cart;
+use App\Domains\Cart\Actions\CheckoutCartAction;
 
 new class extends Component {
     public bool $isOpen = false;
@@ -23,6 +24,11 @@ new class extends Component {
     {
         $this->cart?->refresh();
     }
+
+    public function checkout(CheckoutCartAction $action)
+    {
+        $action();
+    }
 };
 ?>
 
@@ -38,22 +44,21 @@ new class extends Component {
     </div>
 
     <div class="mt-auto">
-        <flux:separator />
-        <div class="p-6">
-            <div class="flex justify-between text-xs mb-4">
-                <div class="flex flex-col gap-1 w-2/3">
-                    <span>{{ __("pages/cart.subtotal") }}</span>
-                    <span>{{ __("pages/cart.shipping") }}</span>
-                </div>
-                <span class="font-bold">200 €</span>
+    <flux:separator />
+        <div class="flex justify-between my-4">
+            <div class="flex flex-col gap-1 w-2/3">
+                <flux:text>{{ __("pages/cart.modal.subtotal") }}</flux:text>
+                <flux:text>{{ __("pages/cart.modal.shipping") }}</flux:text>
             </div>
-            <flux:button class="w-full h-10">
-                <flux:icon name="arrow-right" class="w-4 h-4 hover:cursor-pointer" wire:click="checkout" />
-                {{ __("pages/cart.checkout") }}
-            </flux:button>
-            <a href="{{ route("homepage") }}#products" class="group flex items-center justify-center gap-2 text-xs mt-4">
-                <div class="group-hover:underline">{{ __("pages/cart.continue_shopping") }}</div>
-            </a>
+            <flux:text size="xl">200 €</flux:text>
         </div>
+
+        <flux:button icon="arrow-right" class="w-full h-10 mb-4 hover:cursor-pointer" wire:click="checkout">
+            {{ __("pages/cart.modal.checkout") }}
+        </flux:button>
+
+        <a href="#" class="text-center hover:underline">
+            <flux:text>{{ __("pages/cart.modal.continue_shopping") }}</flux:text>
+        </a>
     </div>
 </flux:modal>
