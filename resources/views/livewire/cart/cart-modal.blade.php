@@ -36,6 +36,12 @@ new class extends Component {
     public function checkout(CheckoutCartAction $action)
     {
         $action();
+
+        Flux::toast(
+            position: 'top right',
+            variant: 'success',
+            text: __('pages/cart.modal.checkout_success'),
+        );
     }
 };
 ?>

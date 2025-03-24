@@ -8,5 +8,6 @@ return [
         'checkout' => 'Payer',
         'subtotal' => 'Sous-total',
         'shipping' => 'Frais de livraison et taxes calculés à l\'étape suivante.',
+        'checkout_success' => 'Votre commande a été passée avec succès.',
     ],
 ];
