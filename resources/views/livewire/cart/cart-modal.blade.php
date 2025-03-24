@@ -14,7 +14,6 @@ new class extends Component {
     {
         $this->cart = request()->attributes->get('cart');
         $this->cart->refresh();
-
         $this->isOpen = true;
     }
 };
@@ -25,7 +24,7 @@ new class extends Component {
     <flux:separator />
     @if ($cart)
         @foreach ($cart->items as $item)
-            <livewire:cart.cart-product :item="$item" wire:key="cart-product-{{ $item->item->uuid }}" />
+            <livewire:cart.cart-product :item="$item" wire:key="cart-product-{{ $item->item->uuid }}-{{ $item->quantity }}" />
         @endforeach
     @endif
 </flux:modal>
