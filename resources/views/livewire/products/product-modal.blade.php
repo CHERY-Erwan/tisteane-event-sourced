@@ -73,7 +73,7 @@ new class extends Component
     }
 }; ?>
 
-<flux:modal :name="'product-details-' . $product?->uuid" class="w-full max-w-[1200px]" wire:model="isOpen">
+<flux:modal :name="'product-details-' . $product?->uuid" class="w-full max-w-[1200px]" wire:model.self="isOpen">
     <flux:heading size="lg">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="#" @click="$wire.isOpen = false">

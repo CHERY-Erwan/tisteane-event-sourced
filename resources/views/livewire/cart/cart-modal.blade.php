@@ -41,7 +41,7 @@ new class extends Component {
     }
 }; ?>
 
-<flux:modal :name="'cart-modal'" variant="flyout" class="w-[500px] flex flex-col h-full" wire:model="isOpen">
+<flux:modal :name="'cart-modal'" variant="flyout" class="w-[500px] flex flex-col h-full" wire:model.self="isOpen">
     <div class="flex-grow overflow-auto">
         <flux:heading size="lg" class="mb-4">{{ __("pages/cart.modal.title") }}</flux:heading>
         <flux:separator />
