@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Domains\Product\Projections\Product;
 use App\Domains\Product\Projections\ProductVariant;
-use App\Models\Size;
 use Livewire\Volt\Component;
 use Livewire\Attributes\On;
 use Illuminate\Support\Collection;
@@ -14,25 +15,27 @@ use Flux\Flux;
 new class extends Component
 {
     public Product $product;
-
     public ProductVariant $variant;
-
     public Collection $sizes;
-
     public Collection $colors;
-
     public int $quantity = 1;
-
     public bool $isOpen = false;
 
+    public function mount(): void
+    {
+        $this->sizes = collect([]);
+        $this->colors = collect([]);
+    }
+
     #[On('show-product')]
-    public function showProduct(string $uuid)
+    public function showProduct(string $uuid): void
     {
         $this->product = Product::query()
             ->with(['variants.size', 'variants.color'])
             ->findOrFail($uuid);
 
         $this->variant = $this->product->variants->first();
+        $this->quantity = 1;
 
         $this->sizes = $this->product->variants->pluck('size')->unique();
         $this->colors = $this->product->variants->where('size.code', $this->variant->size->code)->pluck('color')->unique();
@@ -40,25 +43,18 @@ new class extends Component
         $this->isOpen = true;
     }
 
-    public function mount()
-    {
-        $this->quantity = 1;
-        $this->sizes = collect([]);
-        $this->colors = collect([]);
-    }
-
-    public function updateSize(string $size)
+    public function updateSize(string $size): void
     {
         $this->variant = $this->product->variants->where('size.code', $size)->first();
         $this->colors = $this->product->variants->where('size.code', $this->variant->size->code)->pluck('color')->unique();
     }
 
-    public function updateColor(string $color)
+    public function updateColor(string $color): void
     {
         $this->variant = $this->product->variants->where('color.code', $color)->first();
     }
 
-    public function addToCart(AddItemToCartAction $action)
+    public function addToCart(AddItemToCartAction $action): void
     {
         $action(
             itemUuid: $this->variant->uuid,
@@ -102,7 +98,13 @@ new class extends Component
 
         <section class="w-full flex flex-col gap-4">
             <flux:heading size="xl" level="2" class="opacity-80 flex justify-between">
-                {{ $product?->label }} <flux:badge :color="$product?->stock > 0 ? 'lime' : 'rose'" variant="solid" inset="top bottom" class="opacity-80 h-10">
+                {{ $product?->label }}
+                <flux:badge
+                    :color="$product?->stock > 0 ? 'lime' : 'rose'"
+                    variant="solid"
+                    inset="top bottom"
+                    class="opacity-80 h-10"
+                >
                     {{ $product?->stock > 0 ? __("pages/product.modal.in_stock") : __("pages/product.modal.out_of_stock") }}
                 </flux:badge>
             </flux:heading>
@@ -118,20 +120,21 @@ new class extends Component
                     <flux:text>{!! $product?->description !!}</flux:text>
                 </div>
 
-            <flux:button
-                @click="expanded = !expanded"
-                variant="ghost"
-                size="sm"
-                color="neutral"
-                class="mt-2">
-                <span x-text="expanded ? '{{ __("pages/product.modal.show_less") }}' : '{{ __("pages/product.modal.show_more") }}'"></span>
-                <flux:icon
-                    name="chevron-down"
-                    class="w-4 h-4 transition-transform duration-200"
-                    x-bind:class="expanded ? 'rotate-180' : ''"
-                />
-            </flux:button>
-        </div>
+                <flux:button
+                    @click="expanded = !expanded"
+                    variant="ghost"
+                    size="sm"
+                    color="neutral"
+                    class="mt-2"
+                >
+                    <span x-text="expanded ? '{{ __("pages/product.modal.show_less") }}' : '{{ __("pages/product.modal.show_more") }}'"></span>
+                    <flux:icon
+                        name="chevron-down"
+                        class="w-4 h-4 transition-transform duration-200"
+                        x-bind:class="expanded ? 'rotate-180' : ''"
+                    />
+                </flux:button>
+            </div>
 
             <div class="flex flex-col gap-2">
                 <div class="text-base flex gap-2 items-center justify-start">
@@ -146,11 +149,10 @@ new class extends Component
                             class="hover:cursor-pointer h-12"
                         >
                             <div class="flex items-center justify-center w-full gap-2">
-                                @if ($variant?->size?->code === $size->code)
-                                    <flux:icon name="plus-circle" class="w-3"/>
-                                @else
-                                    <flux:icon name="plus" class="w-3"/>
-                                @endif
+                                <flux:icon
+                                    name="{{ $variant?->size?->code === $size->code ? 'plus-circle' : 'plus' }}"
+                                    class="w-3"
+                                />
                                 {{ $size->label }}
                             </div>
                         </flux:button>
@@ -177,9 +179,17 @@ new class extends Component
             </div>
 
             <flux:button class="w-1/4 h-12 !flex !flex-row !justify-around !items-center">
-                <flux:icon name="minus" class="w-4 h-4 hover:cursor-pointer" wire:click="$set('quantity', {{ max($quantity - 1, 1) }})"/>
+                <flux:icon
+                    name="minus"
+                    class="w-4 h-4 hover:cursor-pointer"
+                    wire:click="$set('quantity', {{ max($quantity - 1, 1) }})"
+                />
                 {{ $quantity }}
-                <flux:icon name="plus" class="w-4 h-4 hover:cursor-pointer" wire:click="$set('quantity', {{ min($quantity + 1, 99) }})"/>
+                <flux:icon
+                    name="plus"
+                    class="w-4 h-4 hover:cursor-pointer"
+                    wire:click="$set('quantity', {{ min($quantity + 1, 99) }})"
+                />
             </flux:button>
 
             <div class="flex flex-row gap-2">
