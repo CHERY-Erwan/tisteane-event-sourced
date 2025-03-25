@@ -21,6 +21,7 @@ final class EnsureCartIsInitialized
         ]));
 
         $request->attributes->set('cart', $cart);
+        $request->session()->put('cart', $cart);
 
         return $next($request);
     }

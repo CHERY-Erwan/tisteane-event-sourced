@@ -6,27 +6,33 @@ use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 use App\Domains\Cart\Projections\Cart;
 use App\Domains\Cart\Actions\CheckoutCartAction;
+use Livewire\Attributes\Session;
+use Livewire\Attributes\Computed;
 
 new class extends Component {
     public bool $isOpen = false;
-    public ?Cart $cart = null;
-    public int $totalCartPrice = 0;
+
+    #[Session(key: 'cart')]
+    public Cart $cart;
 
     #[On("show-cart")]
     public function showCart(): void
     {
-        $this->cart = request()->attributes->get('cart');
-        $this->refreshCart();
         $this->isOpen = true;
     }
 
     #[On("refresh-cart")]
     public function refreshCart(): void
     {
-        $this->cart?->refresh();
-        $this->totalCartPrice = $this->cart?->items->sum(
+        $this->cart->refresh();
+    }
+
+    #[Computed]
+    public function totalCartPrice(): int
+    {
+        return $this->cart->items->sum(
             fn ($item) => $item->item->price * $item->quantity
-        ) ?? 0;
+        );
     }
 
     public function checkout(CheckoutCartAction $action): void
@@ -45,14 +51,7 @@ new class extends Component {
     <div class="flex-grow overflow-auto">
         <flux:heading size="lg" class="mb-4">{{ __("pages/cart.modal.title") }}</flux:heading>
         <flux:separator />
-        @if ($cart)
-            @foreach ($cart->items->sortByDesc('created_at') as $item)
-                <livewire:cart.cart-product
-                    :item="$item"
-                    wire:key="cart-product-{{ $item->item->uuid }}-{{ $item->quantity }}"
-                />
-            @endforeach
-        @endif
+        <livewire:cart.cart-items :cart="$cart" wire:key="cart-items-{{ $cart->items->count() }}" />
     </div>
 
     <div class="mt-auto">
@@ -62,7 +61,7 @@ new class extends Component {
                 <flux:text>{{ __("pages/cart.modal.subtotal") }}</flux:text>
                 <flux:text>{{ __("pages/cart.modal.shipping") }}</flux:text>
             </div>
-            <flux:text size="xl">{{ number_format($totalCartPrice / 100, 2, ',', ' ') }}€</flux:text>
+            <flux:text size="xl">{{ number_format($this->totalCartPrice / 100, 2, ',', ' ') }}€</flux:text>
         </div>
 
         <flux:button
