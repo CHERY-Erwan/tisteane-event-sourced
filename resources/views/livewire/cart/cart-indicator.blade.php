@@ -18,7 +18,7 @@ new class extends Component {
     }
 
     #[On("refresh-cart")]
-    public function updateCartCount(): void
+    public function refreshCart(): void
     {
         $this->cart->refresh();
     }
