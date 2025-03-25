@@ -5,8 +5,11 @@ declare(strict_types=1);
 use App\Domains\Cart\Projections\Cart;
 use Livewire\Volt\Component;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Session;
 
 new class extends Component {
+    #[Session(key: 'cart')]
+    public Cart $cart;
 
     public int $cartItemCount = 0;
 
@@ -18,10 +21,8 @@ new class extends Component {
     #[On("refresh-cart")]
     public function updateCartCount(): void
     {
-        $cart = request()->attributes->get('cart');
-        $cart->refresh();
-
-        $this->cartItemCount = $cart->items->sum('quantity');
+        $this->cart->refresh();
+        $this->cartItemCount = $this->cart->items->sum('quantity');
     }
 }; ?>
 
