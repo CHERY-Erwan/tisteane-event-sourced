@@ -179,7 +179,7 @@ new class extends Component
             </div>
 
             <flux:input
-                wire:model.live.debounce.500ms="quantity"
+                wire:model="quantity"
                 type="number"
                 min="1"
                 max="100"

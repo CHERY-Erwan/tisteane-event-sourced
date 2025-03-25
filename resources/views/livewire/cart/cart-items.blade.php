@@ -20,7 +20,7 @@ new class extends Component {
     @foreach ($this->items() as $item)
         <livewire:cart.cart-item
             :item="$item"
-            wire:key="cart-item-{{ $item->item->uuid }}"
+            :key="'cart-item-' . $item->item->uuid"
         />
     @endforeach
 </div>
