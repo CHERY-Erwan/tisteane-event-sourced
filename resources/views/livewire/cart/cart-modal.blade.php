@@ -51,7 +51,7 @@ new class extends Component {
     <div class="flex-grow overflow-auto">
         <flux:heading size="lg" class="mb-4">{{ __("pages/cart.modal.title") }}</flux:heading>
         <flux:separator />
-        <livewire:cart.cart-items :cart="$cart" wire:key="cart-items-{{ $cart->items->count() }}" />
+        <livewire:cart.cart-items :cart="$cart" wire:key="cart-items-{{ $this->totalCartPrice }}" />
     </div>
 
     <div class="mt-auto">

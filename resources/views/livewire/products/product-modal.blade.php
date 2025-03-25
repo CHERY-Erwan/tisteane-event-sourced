@@ -178,19 +178,15 @@ new class extends Component
                 </div>
             </div>
 
-            <flux:button class="w-1/4 h-12 !flex !flex-row !justify-around !items-center">
-                <flux:icon
-                    name="minus"
-                    class="w-4 h-4 hover:cursor-pointer"
-                    wire:click="$set('quantity', {{ max($quantity - 1, 1) }})"
-                />
-                {{ $quantity }}
-                <flux:icon
-                    name="plus"
-                    class="w-4 h-4 hover:cursor-pointer"
-                    wire:click="$set('quantity', {{ min($quantity + 1, 99) }})"
-                />
-            </flux:button>
+            <flux:input
+                wire:model.live.debounce.500ms="quantity"
+                type="number"
+                min="1"
+                max="100"
+                class="!w-1/4 h-12"
+            >
+                <flux:button size="sm" variant="subtle" class="-mr-1" />
+            </flux:input>
 
             <div class="flex flex-row gap-2">
                 <flux:button class="w-1/2 hover:cursor-pointer h-12" wire:click="addToCart">
