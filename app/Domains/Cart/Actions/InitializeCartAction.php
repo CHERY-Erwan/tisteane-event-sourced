@@ -22,8 +22,8 @@ final class InitializeCartAction
         }
 
         $cart = Cart::query()
-            ->when($cartIdentifiers->isCustomer(), fn ($query) => $query->where('customer_uuid', $cartIdentifiers->customerUuid))
-            ->when($cartIdentifiers->isGuest(), fn ($query) => $query->where('session_id', $cartIdentifiers->sessionId))
+            ->when($cartIdentifiers->isCustomer(), fn($query) => $query->where('customer_uuid', $cartIdentifiers->customerUuid))
+            ->when($cartIdentifiers->isGuest(), fn($query) => $query->where('session_id', $cartIdentifiers->sessionId))
             ->first();
 
         if ($cart) {
